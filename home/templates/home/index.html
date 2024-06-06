@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'home/main.css' %}">
+    <link rel="stylesheet" href="{% static 'node_modules/xterm/css/xterm.css' %}">
+    <script src = "{% static 'node_modules/xterm/lib/xterm.js' %}"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="parent">
+        <div class="child" id="inputDiv">
+            <form id="pair" class="inputBox" method="post">
+                {% csrf_token %}
+                <p>Node ID</p><input type="text" name="nodeID" id="nodeID"/>
+                <p>MT#</p><input type="text" name="mtn" id="mtn"/>
+                <button type="submit">Commission</button>
+            </form>
+            <div class="inputBox">
+                <form id="on" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="on">Turn Device On</button>
+                </form>
+    
+                <form id="read" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="read">Check Device Status</button>
+                </form>
+    
+                <form id="write" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="write">Set Device on-time</button>
+                </form>
+            </div>
+        </div>
+        <div class="child" id="terminal1">
+            {{output}}
+            <script type="module" src="{% static 'home/index1.js' %}"></script>
+        </div>
+        <div class="child" id="terminal2">
+            {{output}}
+            <script type="module" src="{% static 'home/index2.js' %}"></script>
+        </div>
+    </div>
+
+    <script>
+        $(document).on("submit", "#pair", function(e){
+            e.preventDefault();
+
+            $.ajax({
+                type:'POST',
+                url: "/create",
+                data: {
+                    nodeID: $("#nodeID").val(),
+                    mtn: $("#mtn").val(),
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function(data){
+                    alert(data);
+                }
+            })
+        })
+
+        $(document).on("submit", "#on", function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type:"POST",
+                url: "/on",
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function(data){
+                }
+            })
+        })
+
+        $(document).on("submit", "#read", function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type:"POST",
+                url: "/read",
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function(data){
+                }
+            })
+        })
+
+        $(document).on("submit", "#write", function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type:"POST",
+                url: "/write",
+                data: {
+                    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                },
+                success: function(data){
+                }
+            })
+        })
+
+    </script>
+
+</body>
+</html>
